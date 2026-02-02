@@ -108,19 +108,8 @@ jobs:
           echo "Updating feeds..."
           cd ${{ env.SDK_DIR }}
           
-          # 查看 feeds 配置
-          echo "Current feeds configuration:"
-          cat feeds.conf.default
-          
-          # 替换为 GitHub 镜像源以避免 git.openwrt.org 的 503 错误
-          echo "Replacing feeds URLs with GitHub mirrors..."
-          sed -i 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/feed/routing.git|https://github.com/openwrt/routing.git|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/feed/telephony.git|https://github.com/openwrt/telephony.git|g' feeds.conf.default
-          
-          echo "Updated feeds configuration:"
+          # 查看原始 feeds 配置
+          echo "Original feeds configuration:"
           cat feeds.conf.default
           
           # Retry logic for feeds update (handles transient network issues)
@@ -128,6 +117,20 @@ jobs:
           retry_count=0
           while [ $retry_count -lt $max_retries ]; do
             echo "Attempt $((retry_count + 1)) of $max_retries to update feeds..."
+            
+            # 每次重试前都替换为 GitHub 镜像源
+            echo "Replacing feeds URLs with GitHub mirrors..."
+            sed -i 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|g' feeds.conf.default
+            sed -i 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|g' feeds.conf.default
+            sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|g' feeds.conf.default
+            sed -i 's|https://git.openwrt.org/feed/routing.git|https://github.com/openwrt/routing.git|g' feeds.conf.default
+            sed -i 's|https://git.openwrt.org/feed/telephony.git|https://github.com/openwrt/telephony.git|g' feeds.conf.default
+            
+            if [ $retry_count -eq 0 ]; then
+              echo "Updated feeds configuration:"
+              cat feeds.conf.default
+            fi
+            
             if ./scripts/feeds update -a; then
               echo "Feeds update successful"
               break
