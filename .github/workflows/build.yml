@@ -24,7 +24,7 @@ env:
   # Note: this method does not support' master' or' openwrt-23.05' and other branch names.
   # 2. 设置要编译的 OpenWrt 版本 (必须是官方的正式发布版标签, 例如 'v23.05.3')
   #    注意：此方法不支持 'master' 或 'openwrt-23.05' 等分支名
-  OPENWRT_VERSION: 'v23.05.3'
+  OPENWRT_VERSION: 'v25.12.0-rc4'
 
   # 3. Specify the SDK save directory, generally without modification.
   # 3. 指定SDK保存目录，一般不用修改
@@ -168,7 +168,7 @@ jobs:
           echo "path=upload" >> $GITHUB_OUTPUT
 
       # 步骤 8: 上传 .ipk 文件作为构建产物
-      - name: Upload .ipk artifact
+      - name: Upload .apk artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PACKAGE_NAME }}-${{ matrix.target.name }}
@@ -192,4 +192,4 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: release-assets/**/*.ipk
+          files: release-assets/**/*.apk
