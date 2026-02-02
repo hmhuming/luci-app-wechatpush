@@ -38,21 +38,15 @@ permissions:
 
 jobs:
   build:
-    name: Build for ${{ matrix.target.name }}
+    name: Build Package (all architectures)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         target:
-          # The compiled path is found here in https://downloads.openwrt.org/releases/24.10.3/targets, and the name is anything.
-          # 编译的path在https://downloads.openwrt.org/releases/24.10.3/targets 这里查找，name随意
-          - name: rockchip
-            path: rockchip/armv8
-          - name: mediatek_filogic
-            path: mediatek/filogic
-          - name: mips_mt7621
-            path: ramips/mt7621
-          - name: x86_64
+          # 由于本包为架构无关包 (PKGARCH:=all)，只需使用一个目标平台进行构建
+          # 构建产物可用于所有架构 (x86、arm、mips 等)
+          - name: all
             path: x86/64
 
     steps:
