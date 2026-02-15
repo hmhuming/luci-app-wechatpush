@@ -128,14 +128,20 @@ jobs:
           mkdir -p ./package/${PACKAGE_NAME}
           rsync -a --delete "$pkg_src"/ ./package/${PACKAGE_NAME}/
           
+          # 注意：wrtbwmon 在 OpenWrt 22+ (firewall4/nftables) 环境下不兼容
+          # 流量统计功能在新版本中不可用，但保留其他功能
+          
           translation_pkg=${PACKAGE_NAME#luci-app-}
           mkdir -p ./bin/packages
           find ./bin/packages -type f -name "${PACKAGE_NAME}*.apk" -delete
           find ./bin/packages -type f -name "luci-i18n-${translation_pkg}-*.apk" -delete
           {
             echo "CONFIG_PACKAGE_${PACKAGE_NAME}=m"
+            # 注意：流量监控功能在 OpenWrt 22+ 中不可用（wrtbwmon 与 firewall4 不兼容）
+            # echo "CONFIG_PACKAGE_${PACKAGE_NAME}_Enable_Traffic_Monitoring=y"
             echo "CONFIG_PACKAGE_${PACKAGE_NAME}_Enable_Local_Disk_Information_Detection=y"
             echo "CONFIG_PACKAGE_${PACKAGE_NAME}_Enable_Host_Information_Detection=y"
+            # echo "CONFIG_PACKAGE_wrtbwmon=m"  # 在 firewall4 环境下不兼容
             echo "CONFIG_PACKAGE_lsblk=m"
             echo "CONFIG_PACKAGE_smartmontools=m"
             echo "CONFIG_PACKAGE_smartmontools-drivedb=m"
@@ -187,7 +193,7 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - name: x86_64
+          - name: all
             path: x86/64
 
     steps:
