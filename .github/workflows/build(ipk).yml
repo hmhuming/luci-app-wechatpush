@@ -1,6 +1,6 @@
 # https://github.com/Tokisaki-Galaxy/openwrt-package-builder-action
 
-name: Build OpenWrt Package (IPK - v23.05)
+name: Build OpenWrt Package (IPK v23.05)
 
 on:
   push:
